@@ -2,26 +2,43 @@ require 'rest-client'
 require 'json'
 require 'pry'
 
-def get_all_characters
-  all_characters = RestClient.get('http://www.swapi.co/api/people/')
-  character_hash = JSON.parse(all_characters)
-  character_hash.
+def next_page(url)
+  all_characters = RestClient.get(url)
+  hash = JSON.parse(all_characters)
+  return hash
 end
 
-
-def get_character_movies_from_api(character)
-  #make the web request
+def all_characters_iteration
   all_characters = RestClient.get('http://www.swapi.co/api/people/')
   character_hash = JSON.parse(all_characters)
-# binding.pry
-  found_character = character_hash["results"].find do |char_name|
+  new_page = next_page(character_hash["next"])
+
+  while
+    #see if "next" does not equal nil
+    #push in results to character_hash["results"]
+    new_page["next"] != nil
+    character_hash["results"] << new_page["results"]
+    # binding.pry
+    new_page = next_page(new_page["next"])
+      if new_page["next"] == nil
+        character_hash["results"] << new_page["results"]
+      end
+    character_hash["results"].flatten
+    # binding.pry
+  end
+  character_hash["results"].flatten!
+end
+
+# all_characters_iteration
+
+def get_character_movies_from_api(character)
+
+  found_character = all_characters_iteration.find do |char_name|
     char_name["name"] == character
     end
-
   films = found_character["films"]
 # binding.pry
   films
-
   # iterate over the character hash to find the collection of `films` for the given
   #   `character`
   # collect those film API urls, make a web request to each URL to get the info
@@ -32,8 +49,7 @@ def get_character_movies_from_api(character)
   #  and that method will do some nice presentation stuff: puts out a list
   #  of movies by title. play around with puts out other info about a given film.
 end
-
-get_character_movies_from_api("Han Solo")
+# puts get_character_movies_from_api("Finn")
 
 def parse_character_movies(films_hash)
   # some iteration magic and puts out the movies in a nice list
@@ -58,7 +74,7 @@ def show_character_movies(character)
 end
 
 
-# show_character_movies("R2-D2")
+# puts show_character_movies("Han Solo")
 ## BONUS
 
 # that `get_character_movies_from_api` method is probably pretty long. Does it do more than one job?
