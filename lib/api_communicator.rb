@@ -18,6 +18,7 @@ def next_page(character_hash)
   next_url
 end
 
+# all_characters_iteration
 
 
 def get_character_movies_from_api(character)
