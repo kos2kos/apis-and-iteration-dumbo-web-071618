@@ -36,9 +36,9 @@ def get_character_movies_from_api(character)
   found_character = all_characters_iteration.find do |char_name|
     char_name["name"] == character
     end
-  films = found_character["films"]
-# binding.pry
-  films
+    # binding.pry
+  found_character["films"]
+
   # iterate over the character hash to find the collection of `films` for the given
   #   `character`
   # collect those film API urls, make a web request to each URL to get the info
@@ -58,14 +58,16 @@ def parse_character_movies(films_hash)
     #we are requesting from API to get film information
     current_movie = RestClient.get(film_url)
     movie_hash = JSON.parse(current_movie)
-    puts movie_hash["title"]
   end
+  movie_hash["title"]
+  # binding.pry
 end
+
 # arr_movies = ["https://www.swapi.co/api/films/2/",
 #    "https://www.swapi.co/api/films/6/",
 #    "https://www.swapi.co/api/films/3/",
 #    "https://www.swapi.co/api/films/1/"]
-
+#
 # parse_character_movies(arr_movies)
 
 def show_character_movies(character)
